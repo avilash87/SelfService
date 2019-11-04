@@ -1,0 +1,197 @@
+<?php
+include('emp_lock.php');
+include("config.php");
+
+ if($_SERVER["REQUEST_METHOD"] == "POST")
+{
+	// username and password sent from Form
+/*
+	if (addslashes($_POST['requireotp']) == "on"){
+		$otp=1;
+	}
+	else{
+		$otp=0;
+	}
+
+$privs=addslashes($_POST['accesstype']);
+$product_name=addslashes($_POST['product_name']);
+$project_name=addslashes($_POST['project_name']);
+$script=addslashes($_POST['scriptloc']);
+$num_params=addslashes($_POST['num_of_params']);
+$params_name="";
+$regex_name="";
+$comments_name="";
+$params_val="";
+$regex_val="";
+$comments_val="";
+
+	for ($x = 1 ; $x <= $num_params; $x++) {
+		$params_name =  $params_name.",param$x";
+		$params_val = $params_val.",'".$_POST["param$x"]."'";
+		$regex_name = $regex_name.",regex$x";
+		$regex_val = $regex_val.",'".$_POST["regex$x"]."'";
+		$comments_name = $comments_name.",comment$x";
+		$comments_val = $comments_val.",'".$_POST["comment$x"]."'";
+	}
+$otpnotifier=addslashes($_POST['otpnotifier']);
+$taskname=addslashes($_POST['taskname']);
+$createdby=addslashes($_SESSION['login_user']);
+
+foreach ($_POST['envname'] as $names)
+{
+        $envname= $envname.$names.";";
+}
+
+
+
+print "<center><font color=Green>".$taskname." Added To Project ".$project_name."</font></center>";
+$sql="insert into tasks(otp,privs,product_name,project_name,script".$params_name.$regex_name.$comments_name.",otp_notifier,taskname,createdby,envname) values('".$otp."',".$privs.",'".$product_name."','".$project_name."','".$script."'".$params_val.$regex_val.$comments_val.",'".$otpnotifier."','".$taskname."','".$createdby."','".$envname."')";
+$result=mysql_query($sql);
+*/
+
+}
+
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Self Service!</title>
+
+    <!-- Bootstrap core CSS -->
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="fonts/css/font-awesome.min.css" rel="stylesheet">
+    <link href="css/animate.min.css" rel="stylesheet">
+
+    <!-- Custom styling plus plugins -->
+    <link href="css/custom.css" rel="stylesheet">
+    <link href="css/icheck/flat/green.css" rel="stylesheet">
+
+    <script src="js/jquery.min.js"></script>
+
+ <!-- PNotify -->
+    <script type="text/javascript" src="js/notify/pnotify.core.js"></script>
+    <script type="text/javascript" src="js/notify/pnotify.buttons.js"></script>
+    <script type="text/javascript" src="js/notify/pnotify.nonblock.js"></script>
+
+
+    <!--[if lt IE 9]>
+        <script src="../assets/js/ie8-responsive-file-warning.js"></script>
+        <![endif]-->
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+          <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+          <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+        </head>
+        <script>
+function getOTP()
+{
+	reply="";
+	if (document.getElementById("envname").value!= ""){
+	envname = document.getElementById("envname").value;
+	project = document.getElementById("proj").value;
+	product = document.getElementById("prod").value;
+	taskname = document.getElementById("tname").value;
+	uname = document.getElementById("uname").value;
+	notify = document.getElementById("otpnotify").value;
+
+    var xmlhttp=new XMLHttpRequest();
+    xmlhttp.onreadystatechange=function() {
+        if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+        	  document.getElementById("res").innerHTML=xmlhttp.responseText;
+        	  reply=xmlhttp.responseText;;
+        }
+    }
+    xmlhttp.open("GET","getOTP.php?project="+project+"&product="+product+"&taskname="+taskname+"&uname="+uname+"&notify="+notify+"&env="+envname,true);
+    xmlhttp.send();
+    var permanotice, tooltip, _alert;
+        $(function () {
+            new PNotify({
+                title: "OTP Requested",
+                type: "dark",
+                text: reply,
+                nonblock: {
+                    nonblock: true
+                },
+                before_close: function (PNotify) {
+                    // You can access the notice's options with this. It is read only.
+                    //PNotify.options.text;
+
+                    // You can change the notice's options after the timer like this:
+                    PNotify.update({
+                        title: PNotify.options.title + " - Enjoy your Stay",
+                        before_close: null
+                    });
+                    PNotify.queueRemove();
+                    return false;
+                }
+            });
+
+        });
+  }
+  else
+  	alert("Select Environment!!!");
+}
+</script>
+
+<body style="background:#F7F7F7;">
+<div id=res name=res>
+
+</div>
+<form id="myform" method=post action="./fireCommand.php"><center>
+<?php
+$taskname=addslashes($_GET['task']);
+$product=addslashes($_GET['product']);
+$project=addslashes($_GET['project']);
+echo "<input type=hidden name=uname id=uname value=".$_SESSION['emp_login_user']."><input type=hidden name=tname id=tname value=$taskname><input type=hidden name=proj id=proj value=$project><input type=hidden name=prod id=prod value=$product>";
+$sql="SELECT * from tasks where product_name='".$product."' and project_name='".$project."' and taskname='".$taskname."'";
+$result=mysql_query($sql);
+while ($data = mysql_fetch_array($result)){
+		$envname = $data['envname'];
+		$numparams = $data['numparams'];
+		$otp = $data['otp'];
+		$script = $data['script'];
+		$otpnotifier = $data['otp_notifier'];
+		$notify = $data['notify'];
+		$isotp = $data['otp'];
+		echo "<input type=hidden name=isotp id=isotp value=$isotp>";
+		echo "<input type=hidden name=notify id=notify value=$notify>";
+		echo "<input type=hidden name=otpnotify id=otpnotify value=$otpnotifier>";
+		echo "<input type=hidden name=script id=script value=$script>";
+		echo "<input type=hidden name=numparams id=numparams value=$numparams>";
+		$envnames = split ("\;", $envname);
+		echo "Select Environment:<br/><select align=center name=envname id=envname  required pattern='*'><option value=''></option>";
+		foreach ($envnames as &$value) {
+			if ($value != "" )
+    		echo "<option value=".$value.">".$value."</option>";
+		}
+		echo "</select><br/>";
+		echo "Fill Required Parameters<br/><table align=center style='background-repeat:no-repeat; margin:0;' cellpadding='0' cellspacing='0' border=1>";
+		echo "<tr><td><b>Script</b>: $script </td></tr>";
+		for ($x = 1; $x <= $numparams; $x++) {
+			echo "<tr><td><input type=text name=param".$x." id=param".$x." placeholder=".$data['param'.$x]." required pattern='".$data['regex'.$x]."' title=".$data['comment'.$x]." ></td></tr>";
+		}
+		if ( $otp == 1 ){
+			echo "<tr><td align=center><input type=text id='otpvalue' placeholder='OTP' name='otpvalue' required pattern='[0-9]{4}' title='Requires OTP authentication to execute'><input type=button onClick=getOTP() value='Request OTP'></td></tr>";
+		}
+}
+?>
+
+
+
+
+
+        <tr><td align=center><input id="button1" type="submit"></td></tr>
+        </table>
+</center>
+</form>

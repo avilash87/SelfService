@@ -1,0 +1,2 @@
+rhel7.2-template
+_win2k12R2 template

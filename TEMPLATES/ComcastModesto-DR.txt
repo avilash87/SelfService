@@ -1,0 +1,2 @@
+_Server 2012R2 Template
+_Win2K8R2_Template

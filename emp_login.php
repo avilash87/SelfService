@@ -1,0 +1,206 @@
+﻿<?php
+include("config.php");
+$headers = apache_request_headers();
+if (!isset($headers['Authorization'])){
+  header('HTTP/1.1 401 Unauthorized');
+  header('WWW-Authenticate: NTLM');
+  exit;
+}
+$auth = $headers['Authorization'];
+if (substr($auth,0,5) == 'NTLM ') {
+  $msg = base64_decode(substr($auth, 5));
+  if (substr($msg, 0, 8) != "NTLMSSP\x00")
+    die('error header not recognised');
+  if ($msg[8] == "\x01") {
+    $msg2 = "NTLMSSP\x00\x02\x00\x00\x00".
+        "\x00\x00\x00\x00". // target name len/alloc
+      "\x00\x00\x00\x00". // target name offset
+      "\x01\x02\x81\x00". // flags
+      "\x00\x00\x00\x00\x00\x00\x00\x00". // challenge
+      "\x00\x00\x00\x00\x00\x00\x00\x00". // context
+      "\x00\x00\x00\x00\x00\x00\x00\x00"; // target info len/alloc/offset
+    header('HTTP/1.1 401 Unauthorized');
+    header('WWW-Authenticate: NTLM '.trim(base64_encode($msg2)));
+    exit;
+  }
+  else if ($msg[8] == "\x03") {
+    function get_msg_str($msg, $start, $unicode = true) {
+      $len = (ord($msg[$start+1]) * 256) + ord($msg[$start]);
+      $off = (ord($msg[$start+5]) * 256) + ord($msg[$start+4]);
+      if ($unicode)
+        return str_replace("\0", '', substr($msg, $off, $len));
+      else
+        return substr($msg, $off, $len);
+    }
+    $user = get_msg_str($msg, 36);
+    $domain = get_msg_str($msg, 28);
+    $workstation = get_msg_str($msg, 44);
+
+  }
+}
+
+ session_start();
+if($_SERVER["REQUEST_METHOD"] == "POST")
+{
+	// username and password sent from Form
+$myusername=addslashes($_POST['username']);
+$mypassword=addslashes($_POST['password']);
+$proj = addslashes($_POST['project_name']);
+
+
+ print "<center><font color=red> Your NTNET is not configured to use the system. Please contact Admin!!!</font></center>";
+$sql="SELECT * FROM user WHERE name='$myusername' and project='$proj'";
+$result=mysql_query($sql);
+$row=mysql_fetch_array($result);
+$profile=$row['profile'];
+$email=$row['email'];
+$mobile=$row['mobile'];
+$project=$row['project'];
+
+$count=mysql_num_rows($result);
+
+// If result matched $myusername and $mypassword, table row must be 1 row
+if($count>=1)
+{
+//session_register("myusername");
+$_SESSION['emp_login_user']=$myusername;
+$_SESSION['emp_profile']=$profile;
+$_SESSION['email']=$email;
+$_SESSION['mobile']=$mobile;
+$_SESSION['project']=$project;
+
+header("location: emp_index.php");
+}
+else
+{
+$error="Your NTNET is not configured to use the system. Please contact Admin!!!";
+
+}
+}
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Self Service!</title>
+
+    <!-- Bootstrap core CSS -->
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="fonts/css/font-awesome.min.css" rel="stylesheet">
+    <link href="css/animate.min.css" rel="stylesheet">
+
+    <!-- Custom styling plus plugins -->
+    <link href="css/custom.css" rel="stylesheet">
+    <link href="css/icheck/flat/green.css" rel="stylesheet">
+
+
+    <script src="js/jquery.min.js"></script>
+
+    <!--[if lt IE 9]>
+        <script src="../assets/js/ie8-responsive-file-warning.js"></script>
+        <![endif]-->
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+          <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+          <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+</head>
+
+<body style="background:#F7F7F7;">
+
+    <div class="">
+        <a class="hiddenanchor" id="toregister"></a>
+        <a class="hiddenanchor" id="tologin"></a>
+
+        <div id="wrapper">
+            <div id="login" class="animate form">
+                <section class="login_content">
+                    <form method=POST action="emp_login.php">
+                        <h1><font size=10 color=green face=calibri> Self Service </font></h1>
+                        <div>
+                            <input type="text" class="form-control" placeholder="Username" required="" name="username" id="username"  value="<?= $user?>" readonly  />
+                        </div>
+                         <div>
+                         		<select class="form-control" placeholder="Project" required="" name="project_name" id="project_name">
+                        		<?php
+                        			$sql="SELECT * from projects";
+                        			$result=mysql_query($sql);
+															while ($data = mysql_fetch_array($result)){
+																print "<option value=".$data['project_name'].">".$data['project_name']."</option>";
+                 							}
+                 						?>
+                        	</select>
+                        </div>
+                        <div>
+                            <input type="submit" value="Log In" class="btn btn-default submit" >
+                            <a class="reset_pass" href="#">Lost your password?</a>
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="separator">
+
+                            <div class="clearfix"></div>
+                            <br />
+                            <div>
+                                <h1><img src=./images/BPT.png><i class="fa fa-paws" style="font-size: 26px;"></i> </h1>
+
+                                <p> All Rights Reserved.Accenture</p>
+                            </div>
+                        </div>
+                    </form>
+                    <!-- form -->
+                </section>
+                <!-- content -->
+            </div>
+            <div id="register" class="animate form">
+                <section class="login_content">
+                    <form>
+                        <h1>Create Account</h1>
+                        <div>
+                            <input type="text" class="form-control" placeholder="Username" required="" name="username" id="username"/>
+                        </div>
+                        <div>
+                            <input type="email" class="form-control" placeholder="Email" required="" name="email" id="email"/>
+                        </div>
+                        <div>
+                            <input type="password" class="form-control" placeholder="Password" required="" name="password" id="password"/>
+                        </div>
+                        <div>
+                            <a class="btn btn-default submit" href="index.html">Submit</a>
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="separator">
+
+                            <p class="change_link">Already a member ?
+                                <a href="#tologin" class="to_register"> Log in </a>
+                            </p>
+                            <div class="clearfix"></div>
+                            <br />
+                            <div>
+                                <h1><img src=./images/BPT.png><i class="fa fa-paws" style="font-size: 26px;"></i>Beyond Unix</h1>
+
+                                <p> All Rights Reserved. Accenture</p>
+                            </div>
+                        </div>
+                    </form>
+                    <!-- form -->
+                </section>
+                <!-- content -->
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

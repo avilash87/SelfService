@@ -1,0 +1,202 @@
+﻿<?php
+include('lock.php');
+include("config.php");
+ if($_SERVER["REQUEST_METHOD"] == "POST")
+{
+	// username and password sent from Form
+
+	if (addslashes($_POST['requireotp']) == "on"){
+		$otp=1;		
+	}
+	else{
+		$otp=0;	
+	}
+		
+$privs=addslashes($_POST['accesstype']);
+$product_name=addslashes($_POST['product_name']);
+$project_name=addslashes($_POST['project_name']);
+$script=addslashes($_POST['scriptloc']);
+$num_params=addslashes($_POST['num_of_params']);
+$notify=addslashes($_POST['notify']);
+$params_name="";
+$regex_name="";
+$comments_name="";
+$params_val="";
+$regex_val="";
+$comments_val="";
+
+	for ($x = 1 ; $x <= $num_params; $x++) {
+		$params_name =  $params_name.",param$x";
+		$params_val = $params_val.",'".$_POST["param$x"]."'";
+		$regex_name = $regex_name.",regex$x";
+		$regex_val = $regex_val.",'".$_POST["regex$x"]."'";
+		$comments_name = $comments_name.",comment$x";
+		$comments_val = $comments_val.",'".$_POST["comment$x"]."'";
+	} 
+$otpnotifier=addslashes($_POST['otpnotifier']);
+$taskname=addslashes($_POST['taskname']);
+$taskid=str_replace(' ', '_', $_POST['taskid']);
+$description=addslashes($_POST['description']);
+$createdby=addslashes($_SESSION['login_user']);
+$envname="All";
+
+
+
+
+print "<center><font color=Green>".$taskname." Added To Project ".$project_name."</font></center>";
+$sql="insert into tasks(otp,privs,product_name,project_name,script".$params_name.$regex_name.$comments_name.",otp_notifier,taskname,createdby,envname,numparams,notify,taskid,description) values('".$otp."',".$privs.",'".$product_name."','".$project_name."','".$script."'".$params_val.$regex_val.$comments_val.",'".$otpnotifier."','".$taskname."','".$createdby."','".$envname."',".$num_params.",'".$notify."','".$taskid."','".$description."')";
+$result=mysql_query($sql);
+//print($sql);
+}
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Self Service!</title>
+
+    <!-- Bootstrap core CSS -->
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="fonts/css/font-awesome.min.css" rel="stylesheet">
+    <link href="css/animate.min.css" rel="stylesheet">
+
+    <!-- Custom styling plus plugins -->
+    <link href="css/custom.css" rel="stylesheet">
+    <link href="css/icheck/flat/green.css" rel="stylesheet">
+
+
+    <script src="js/jquery.min.js"></script>
+
+    <!--[if lt IE 9]>
+        <script src="../assets/js/ie8-responsive-file-warning.js"></script>
+        <![endif]-->
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+          <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+          <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+<script>
+function getProducts()
+{
+	str = document.getElementById("project_name").value;
+    var xmlhttp=new XMLHttpRequest();
+    xmlhttp.onreadystatechange=function() {
+        if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+        	  document.getElementById("productpanel").innerHTML=xmlhttp.responseText;
+        }
+    }
+    xmlhttp.open("GET","getProduct.php?project="+str,true);
+    xmlhttp.send();
+    
+}
+
+function getEnvs()
+{
+	str = document.getElementById("product_name").value;
+    var xmlhttp=new XMLHttpRequest();
+    xmlhttp.onreadystatechange=function() {
+        if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+        	  document.getElementById("envpanel").innerHTML=xmlhttp.responseText;
+        }
+    }
+    xmlhttp.open("GET","getEnv.php?product="+str,true);
+    xmlhttp.send();
+    
+}
+
+function getNumParams()
+{
+	str = document.getElementById("numparams").value;
+    var xmlhttp=new XMLHttpRequest();
+    xmlhttp.onreadystatechange=function() {
+        if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+        	  document.getElementById("parampanel").innerHTML=xmlhttp.responseText;
+        }
+    }
+    xmlhttp.open("GET","getNumParams.php?numparams="+str,true);
+    xmlhttp.send();
+    
+}
+
+</script>
+</head>
+
+<body style="background:#F7F7F7;">
+    
+    <div class="">
+        <a class="hiddenanchor" id="toregister"></a>
+        <a class="hiddenanchor" id="tologin"></a>
+
+        <div id="wrapper">
+            <div id="login" class="animate form">
+                <section class="login_content">
+                    <form method=POST action="newTask.php">
+                        <h1>New Task</h1>
+                        <div><input type="text" class="form-control" placeholder="Unique Task Name" required="" name="taskname" id="taskname" /></div>
+			<div><input type="text" class="form-control" placeholder="Unique Task Id" required="" name="taskid" id="taskid" /></div>
+			<div><input type="text" class="form-control" placeholder="Description" required="" name="description" id="description" /></div>
+                        <div><input type="text" class="form-control" placeholder="Notifcation Mail" required="" name="notify" id="notify" /></div>
+                        <div>
+                        	Select Project<select onChange=getProducts() class="form-control" placeholder="Project" required="" name="project_name" id="project_name">
+                        		<option value="" selected></option>
+					<option value="All" >All</option>
+                        		<?php
+                        			$sql="SELECT * from projects";
+                        			$result=mysql_query($sql);
+															while ($data = mysql_fetch_array($result)){
+																print "<option value=".$data['project_name'].">".$data['project_name']."</option>";
+                 							}    
+                 						?>
+                        	</select>
+                        	</div><br/>
+                        	
+                        	<div name="productpanel" id="productpanel">
+                        		
+                        	</div><br/>
+                        	<div name="envpanel" id="envpanel">
+                        		
+                        	</div>
+                        	<div id="parampanel" id="parampanel">
+                        	
+                        	</div>
+                        	
+                        	<div id="scriptpanel" id="scriptpanel">
+                        	
+                        	</div>
+                        <div>
+                            <center><input type="submit" value="Create Task" class="btn btn-default submit" ></center>
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="separator">
+
+                           
+                            <div class="clearfix"></div>
+                            <br />
+                            <div>
+                                <h1><img src=./images/BPT.png width=30px height=30px><i class="fa fa-paws" style="font-size: 26px;"></i> Self Service</h1>
+
+                                <p> All Rights Reserved.Accenture</p>
+                            </div>
+                        </div>
+                    </form>
+                    <!-- form -->
+                </section>
+                <!-- content -->
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

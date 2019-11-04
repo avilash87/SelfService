@@ -1,0 +1,14 @@
+<table border=1>
+<tr><th BGCOLOR=#C0C0C0><font color=blue><B>SOURCE ENVIRONMENT</B></font></th><th bgcolor=#FF9933><B>itsscmi</B></th></tr>
+<tr><th BGCOLOR=#C0C0C0><font color=blue><B>DESTINATION ENVIRONMENT</B></font></th><th bgcolor=#FF9933><B>itsscmi</B></th></tr>
+<tr><th BGCOLOR=#C0C0C0><font color=blue><B>DESTINATION PORT</B></font></th><th bgcolor=#FF9933><B>22</B></th></tr>
+<tr><th BGCOLOR=#C0C0C0><font color=blue><B>NTNET ID</B></font></th><th bgcolor=#FF9933><B>kavitapo</B></th></tr>
+</table>
+<br></br>
+<table border=1>
+<tr bgcolor=#C0C0C0 ><th><font color=blue><B>MESSAGE_TYPE</B></font></th>
+<th><font color=blue><B>MESSAGE</B></font></th>
+</tr>
+<tr bgcolor=#C0C0C0 ><th><font color=blue><B>ERROR</th><th bgcolor=#FF0000>Telnet is Failed/NOK</B></font></th>
+</tr>
+</table>
