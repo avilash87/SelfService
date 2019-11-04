@@ -148,13 +148,15 @@ function getNumParams()
         selector: '.fb-main',
         bootstrapData: [
           {
-            "label": "Do you have a website?",
-            "field_type": "website",
-            "required": false,
+            "label": "Unique Task Name",
+            "field_type": "text",
+            "required": true,
+	    "value": "true",
             "field_options": {},
             "cid": "c1"
           },
-          {
+ 
+	  {
             "label": "Please enter your clearance number",
             "field_type": "text",
             "required": true,
