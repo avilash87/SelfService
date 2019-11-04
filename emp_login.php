@@ -155,7 +155,7 @@ $error="Your NTNET is not configured to use the system. Please contact Admin!!!"
                             <div>
                                 <h1><img src=./images/BPT.png><i class="fa fa-paws" style="font-size: 26px;"></i> </h1>
 
-                                <p> All Rights Reserved.Accenture</p>
+                                <p> All Rights Reserved.RaAv</p>
                             </div>
                         </div>
                     </form>
@@ -190,7 +190,7 @@ $error="Your NTNET is not configured to use the system. Please contact Admin!!!"
                             <div>
                                 <h1><img src=./images/BPT.png><i class="fa fa-paws" style="font-size: 26px;"></i>Beyond Unix</h1>
 
-                                <p> All Rights Reserved. Accenture</p>
+                                <p> All Rights Reserved. RaAv</p>
                             </div>
                         </div>
                     </form>

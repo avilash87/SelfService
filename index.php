@@ -11,7 +11,7 @@ include('lock.php');
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Accenture SelfService Tool!</title>
+    <title>RaAv SelfService Tool!</title>
 
     <!-- Bootstrap core CSS -->
 
@@ -701,7 +701,7 @@ include('lock.php');
 
                 <footer>
                     <div class="">
-                        <p class="pull-right">Accenture!</a>. |
+                        <p class="pull-right">RaAv!</a>. |
                             <span class="lead"> <i class="fa fa-paw"></i> Self Service</span>
                         </p>
                     </div>

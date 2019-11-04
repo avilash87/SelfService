@@ -87,7 +87,7 @@ $result=mysql_query($sql);
                             <div>
                                 <h1><img src=./images/BPT.png width=30px height=30px><i class="fa fa-paws" style="font-size: 26px;"></i> Self Service</h1>
 
-                                <p> All Rights Reserved.Accenture</p>
+                                <p> All Rights Reserved.RaAv</p>
                             </div>
                         </div>
                     </form>
