@@ -141,7 +141,7 @@ include('lock.php');
                                 </li>
                                 <li><a><i class="fa fa-table"></i>Manage Tasks<span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu" style="display: none">
-                                        <li><a onClick=load_page('newTask_test.php')>New Task</a></li>
+                                        <li><a onClick=load_page('formb/index.html')>New Task</a></li>
                                         <li><a onClick=load_page('rmTask.php')>Remove Task</a></li>
                                         <li><a onClick=load_page('edTask.php')>Edit Task</a></li>
                                     </ul>
